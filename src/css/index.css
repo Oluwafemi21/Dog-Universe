@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 header {
-    @apply bg-white shadow-sm py-4
+    @apply bg-white shadow-sm py-4 dark:bg-darkElement
 }
 
 .container {
@@ -18,19 +18,11 @@ nav {
 
 
 .search {
-    @apply flex items-center justify-between my-9 flex-wrap gap-6
+    @apply text-sm md:text-base min-w-[300px] bg-white shadow rounded flex items-center  px-6 gap-3 focus-within:ring-2 focus-within:ring-black dark:bg-darkElement dark:text-white dark:focus-within:ring-white hover:ring-2 dark:hover:ring-white
+    hover:ring-black
 }
 
-.home form {
-    @apply text-sm md:text-base min-w-[400px] bg-white shadow rounded flex items-center px-6 gap-3 focus-within:ring-2 focus-within:ring-black
+.search input {
+    @apply w-full py-2.5 focus:outline-none text-lightInput dark:text-white bg-inherit
 }
 
-.home form input {
-    @apply w-full py-3 focus:outline-none
-}
-
-.cards {
-    display: grid;
-    gap: 30px;
-    grid-template-columns: repeat(auto-fit, minmax(330px, 1fr));
-}
