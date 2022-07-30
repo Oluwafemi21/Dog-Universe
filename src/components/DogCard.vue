@@ -4,7 +4,7 @@
             Dogs
         </h1>
         <ul
-            class="grid gap-x-4 gap-y-8 grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+            class="grid gap-x-4 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         >
             <li
                 v-for="(dog, index) in dogs"
@@ -13,7 +13,7 @@
             >
                 <router-link :to="'/dog/' + dog.split('/')[4] + '/' + index">
                     <img
-                        class="w-full h-52 object-cover rounded"
+                        class="w-full h-60 sm:h-52 object-cover rounded"
                         :src="dog"
                         :alt="dog.split('/')[4]"
                     />
