@@ -1,140 +1,111 @@
 <template>
-    <section class="my-8">
+    <section class="my-8 flex-1">
         <div class="container">
-            <div class="flex items-center justify-between my-9 flex-wrap gap-6">
-                <form
-                    class="flex flex-wrap items-center gap-6"
-                    @submit.prevent="searchDog"
-                >
-                    <div class="search">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            class="h-6 w-6 text-gray-600 dark:text-lightGrey"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                            stroke-width="2"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                            />
-                        </svg>
-                        <input
-                            v-model="breed"
-                            type="text"
-                            placeholder="Search for a dog by breed..."
+            <form
+                class="flex flex-wrap items-center gap-6 mb-6"
+                @submit.prevent="searchDog"
+            >
+                <div class="search">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6 text-gray-600 dark:text-lightGrey"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                    >
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                         />
-                    </div>
-                    <button
-                        type="submit"
-                        class="py-2 px-6 rounded bg-blue-900 text-white"
-                    >
-                        Search
-                    </button>
-                </form>
-
-                <div class="dropdown-menu relative">
-                    <button
-                        @click="showDropDown"
-                        class="text-darkBlue bg-white focus:ring-2 focus:outline-none focus:ring-black font-medium shadow rounded-lg text-sm px-3.5 py-2.5 text-center inline-flex items-center dark:bg-darkElement dark:text-white dark:focus-within:ring-white hover:ring-white hover:ring-2"
-                        type="button"
-                    >
-                        Filter by Breed
-                        <svg
-                            class="ml-2 w-4 h-4"
-                            aria-hidden="true"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M19 9l-7 7-7-7"
-                            ></path>
-                        </svg>
-                    </button>
-                    <!-- Dropdown menu -->
-                    <div
-                        v-if="dropdown"
-                        class="absolute mt-3 top-auto bottom-auto right-auto left-0 z-10 w-40 bg-white rounded divide-y divide-gray-100 shadow dark:bg-gray-700"
-                    >
-                        <ul
-                            class="py-1 text-sm text-gray-700 dark:text-gray-200"
-                            aria-labelledby="dropdownDefault"
-                        >
-                            <li>
-                                <a
-                                    href="#"
-                                    class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    >Dashboard</a
-                                >
-                            </li>
-                            <li>
-                                <a
-                                    href="#"
-                                    class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    >Settings</a
-                                >
-                            </li>
-                            <li>
-                                <a
-                                    href="#"
-                                    class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    >Earnings</a
-                                >
-                            </li>
-                            <li>
-                                <a
-                                    href="#"
-                                    class="block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    >Sign out</a
-                                >
-                            </li>
-                        </ul>
-                    </div>
+                    </svg>
+                    <input
+                        v-model="breed"
+                        type="text"
+                        placeholder="Search for a dog by breed..."
+                    />
                 </div>
-            </div>
-            <p v-show="searchResult">{{ searchResult }}</p>
-            <dog-card :dogs="getDogs" />
+                <button
+                    type="submit"
+                    class="py-2 px-6 rounded bg-blue-900 text-white w-auto"
+                >
+                    Search
+                </button>
+            </form>
+
+            <template v-if="dogs">
+                <p class="mb-4 text-xl" v-show="dogs.length">
+                    {{ searchResult }}
+                </p>
+                <dog-card :dogs="getDogs" />
+            </template>
+            <preloader v-show="loading" />
+
+            <p v-show="!dogs.length">{{ searchResult }}</p>
         </div>
     </section>
 </template>
 
 <script>
 import DogCard from "@/components/DogCard.vue";
-import { mapGetters, mapActions } from "vuex";
-// @ is an alias to /src
+import { mapGetters, mapActions, mapState } from "vuex";
+import axios from "axios";
+import Preloader from "@/components/Preloader.vue";
 
 export default {
     name: "HomeView",
-    components: { DogCard },
+    components: { DogCard, Preloader },
     data() {
         return {
-            dropdown: false,
             breed: "",
             searchResult: "",
+            loading: true,
         };
     },
     methods: {
-        ...mapActions(["fetchDogs", "searchDogs"]),
-        showDropDown() {
-            this.dropdown = !this.dropdown;
-        },
-        searchDog() {
-            this.searchDogs(this.breed);
-            this.searchResult = `Search results for "${this.breed}"`;
+        ...mapActions(["fetchDogs", "searchDogs", "errorInSearch"]),
+        async searchDog() {
+            this.loading = true;
+            try {
+                let response1 = await axios.get(
+                    `https://dog.ceo/api/breed/${this.breed}/images/random/50`
+                );
+                let response2 = await axios.get(
+                    `https://dog.ceo/api/breed/${this.breed}/images/random/50`
+                );
+
+                this.searchDogs(
+                    response1.data.message.concat(response2.data.message)
+                );
+                this.loading = false;
+                this.searchResult = `Search results for "${this.breed}" :`;
+            } catch (error) {
+                this.loading = false;
+                console.log(error);
+                this.searchResult = `No results found for "${this.breed}".`;
+                this.errorInSearch([]);
+            }
         },
     },
     computed: {
         ...mapGetters(["getDogs"]),
+        ...mapState(["dogs"]),
     },
-    created() {
-        this.fetchDogs();
+    async created() {
+        try {
+            let response1 = await axios.get(
+                "https://dog.ceo/api/breeds/image/random/50"
+            );
+            let response2 = await axios.get(
+                "https://dog.ceo/api/breeds/image/random/50"
+            );
+            const data = response1.data.message.concat(response2.data.message);
+            this.fetchDogs(data);
+            this.loading = false;
+        } catch (error) {
+            console.log(error);
+        }
     },
 };
 </script>

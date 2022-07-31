@@ -4,7 +4,7 @@
             <nav>
                 <router-link :to="{ name: 'home' }">
                     <h1
-                        class="font-bold text-darkBlue dark:text-white md:text-2xl text-xl"
+                        class="font-bold text-darkBlue dark:text-white md:text-2xl text-base"
                     >
                         Find a dog for your home
                     </h1>

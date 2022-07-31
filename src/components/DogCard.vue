@@ -1,8 +1,5 @@
 <template>
     <section class="cards">
-        <h1 class="text-2xl font-bold text-darkBlue dark:text-white mb-4">
-            Dogs
-        </h1>
         <ul
             class="grid gap-x-4 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
         >
@@ -15,7 +12,11 @@
                     <img
                         class="w-full h-60 sm:h-52 object-cover rounded"
                         :src="dog"
-                        :alt="dog.split('/')[4]"
+                        :alt="
+                            dog.split('/')[4].charAt(0).toUpperCase() +
+                            dog.split('/')[4].slice(1)
+                        "
+                        loading="lazy"
                     />
                 </router-link>
                 <p

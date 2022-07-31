@@ -1,7 +1,7 @@
 <template>
     <button
         @click="toggleDark()"
-        class="flex items-center space-x-1 text-sm py-2 px-4 rounded focus:ring-2 focus:ring-black focus:outline-none dark:focus:ring-white"
+        class="flex items-center space-x-1 text-sm py-2 px-4 rounded focus:ring-2 focus:ring-black focus:dark:ring-white"
     >
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -18,7 +18,7 @@
             />
         </svg>
 
-        <span class="dark:md:block hidden">Light Mode</span>
+        <span class="dark:md:block hidden font-semibold">Light Mode</span>
 
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -30,7 +30,9 @@
                 d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"
             />
         </svg>
-        <span class="md:block dark:md:hidden hidden">Dark Mode</span>
+        <span class="md:block dark:md:hidden hidden font-semibold"
+            >Dark Mode</span
+        >
     </button>
 </template>
 
